@@ -2,6 +2,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -22,6 +24,7 @@ class RestaurantTest {
         restaurant = Mockito.spy(new Restaurant("Amelie's cafe","Chennai",openingTime,closingTime));
         restaurant.addToMenu("Sweet corn soup",119);
         restaurant.addToMenu("Vegetable lasagne", 269);
+        restaurant.addToMenu("Cheese Burger",310);
     }
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>OPEN/CLOSED<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -63,4 +66,23 @@ class RestaurantTest {
                 ()->restaurant.removeFromMenu("French fries"));
     }
     //<<<<<<<<<<<<<<<<<<<<<<<MENU>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    @Test
+    public void calculating_final_amount_for_existing_menu_items_should_return_sum_of_their_prices() throws itemNotFoundException {
+        List<String> items = new ArrayList(2){{
+            add("Sweet corn soup");//119
+            add("Cheese Burger");//310
+        }};
+        int amount = restaurant.calculateOrderTotal(items);
+        assertEquals(429,amount);
+    }
+    @Test
+    public void calculating_final_amount_for_any_non_existing_menu_item_should_throw_exception() throws itemNotFoundException{
+        List<String> items = new ArrayList(2){{
+            add("Sweet corn soup");
+            add("Veg Cheese Pizza");
+        }};
+
+        assertThrows(itemNotFoundException.class,()->restaurant.calculateOrderTotal(items));
+    }
 }
